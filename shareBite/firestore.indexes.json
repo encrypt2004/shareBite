@@ -1,0 +1,33 @@
+{
+  "indexes": [
+    {
+      "collectionId": "listings",
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "created_at", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionId": "claims",
+      "fields": [
+        { "fieldPath": "ngo_id", "order": "ASCENDING" },
+        { "fieldPath": "claimed_at", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionId": "claims",
+      "fields": [
+        { "fieldPath": "listing_id", "order": "ASCENDING" },
+        { "fieldPath": "claimed_at", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionId": "notifications",
+      "fields": [
+        { "fieldPath": "user_id", "order": "ASCENDING" },
+        { "fieldPath": "created_at", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

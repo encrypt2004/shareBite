@@ -1,133 +1,124 @@
 ## ShareBite
 
-ShareBite is a food-sharing platform that connects restaurants, hotels, banquet halls and similar food providers with NGOs. Food providers can post information about surplus edible food (quantity, quality, pickup window, and location). NGOs can browse listings, contact providers, verify food quality, and deliver to people in need. The goal is to reduce food waste and improve redistribution of surplus food.
+ShareBite connects food providers (restaurants, hotels, banquets) with NGOs to reduce food waste. Backend is Firebase (Auth, Firestore, Cloud Functions HTTP at `/api`), frontend is Vite + React.
 
-This repository is a minimal monorepo containing a Vite + React frontend and a Firebase backend. This project is an MVP (minimum viable product) and not production-ready.
+## Current Status
 
-## Project Overview
+- Repo scaffolded with Firebase config and Functions/Frontend workspaces; API and UI are not yet implemented.
+- Node engine for Functions: 20 (install on local machines to match deploy/runtime).
 
-- Purpose: Reduce food waste by connecting surplus-food providers with NGOs who can redistribute the food.
-- Scope: MVP to demonstrate core flows: posting listings, browsing, claiming, and basic authentication.
-
-## Tech Stack
-
-- Frontend: Vite + React
-- Backend: Firebase (Authentication, Firestore / Realtime Database, Cloud Functions, Hosting)
-
-This project uses Firebase services for backend features instead of a traditional Node/Express server.
-
-## Features (MVP)
-
-- Food providers can create and manage listings describing surplus food (quantity, quality, pickup window, location).
-- NGOs can browse listings and view listing details.
-- Basic authentication for users (providers and NGOs).
-- NGOs can claim listings or contact providers to arrange pickup.
-- Simple role-based views: provider dashboard and NGO dashboard.
-
-## Folder Structure
-
+## Folder Structure (target)
 
 ```
 shareBite/
-├── README.md
-├── firebase.json
-├── .firebaserc
-├── firestore.rules
-├── firestore.indexes.json
-├── functions/
-│   ├── package.json
-│   ├── index.js
-│   └── src/
-│       ├── auth.js
-│       ├── listings.js
-│       └── claims.js
-└── frontend/
-    ├── package.json
-    ├── vite.config.js
-    ├── index.html
-    ├── .env.local
-    ├── public/
-    └── src/
-        ├── main.jsx
-        ├── App.jsx
-        ├── firebase.js
-        ├── pages/
-        │   ├── Home.jsx
-        │   ├── Browse.jsx
-        │   ├── ListingDetails.jsx
-        │   ├── Login.jsx
-        │   ├── Register.jsx
-        │   ├── RestaurantDashboard.jsx
-        │   └── NGODashboard.jsx
-        └── components/
-            ├── ListingCard.jsx
-            └── Header.jsx
+├─ .firebaserc
+├─ firebase.json
+├─ firestore.rules
+├─ firestore.indexes.json
+├─ functions/
+│  ├─ package.json
+│  ├─ index.js                # exports https API entry
+│  └─ src/
+│     ├─ auth.js              # /api/auth/* endpoints
+│     ├─ listings.js          # /api/listings* endpoints
+│     └─ claims.js            # /api/claims* + notifications helpers
+└─ Frontend/
+   ├─ package.json
+   ├─ vite.config.js
+   ├─ .env.local              # VITE_BACKEND_URL + VITE_FIREBASE_*
+   ├─ index.html
+   ├─ public/
+   └─ src/
+      ├─ main.jsx
+      ├─ App.jsx
+      ├─ index.css
+      ├─ styles/
+      │  └─ theme.css
+      ├─ firebase.js          # client SDK init (optional)
+      ├─ api/
+      │  ├─ client.js         # axios base with auth header
+      │  ├─ auth.js
+      │  ├─ listings.js
+      │  └─ claims.js
+      ├─ hooks/
+      │  ├─ useAuth.js
+      │  └─ useFetch.js
+      ├─ components/
+      │  ├─ Header.jsx
+      │  ├─ ListingCard.jsx
+      │  └─ shared UI (buttons, badges, etc.)
+      ├─ pages/
+      │  ├─ Home.jsx
+      │  ├─ Browse.jsx
+      │  ├─ ListingDetails.jsx
+      │  ├─ Login.jsx
+      │  ├─ Register.jsx
+      │  ├─ RestaurantDashboard.jsx
+      │  └─ NGODashboard.jsx
+      └─ lib/
+         └─ utils.js          # helpers (e.g., className concat)
 ```
 
-## Getting Started
+## Prerequisites
 
-These steps show a minimal way to run the frontend (Vite) and use Firebase for backend development.
+- Node 20.x (recommended to match Functions runtime)
+- npm
+- Firebase CLI (`npm i -g firebase-tools`) for emulators/deploy
 
-Prerequisites:
-- Node.js (LTS) installed
-- npm or yarn
-- Firebase account and Firebase CLI (optional for emulators and deploy)
+## Setup
 
-1) Firebase (backend)
-
-- If you plan to use Firebase locally, install the Firebase CLI and initialize a project (you only need to do this once):
-
+1) Clone and install
 ```powershell
-npm install -g firebase-tools
-firebase login
-firebase init
+git clone <repo-url>
+cd shareBite
+cd Frontend && npm install
+cd ..\functions && npm install
 ```
 
-- For local development you can use the Firebase Emulator Suite (recommended):
+2) Env files (frontend)
+Create Frontend/.env.local (already added here for local use) with:
+```
+VITE_FIREBASE_API_KEY=...
+VITE_FIREBASE_AUTH_DOMAIN=...
+VITE_FIREBASE_PROJECT_ID=...
+VITE_FIREBASE_STORAGE_BUCKET=...
+VITE_FIREBASE_MESSAGING_SENDER_ID=...
+VITE_FIREBASE_APP_ID=...
+VITE_BACKEND_URL=http://localhost:5001/<project>/us-central1/api
+```
 
+3) Run frontend dev server
 ```powershell
+cd Frontend
+npm run dev
+```
+Default: http://localhost:5173
+
+4) Run Firebase emulators (once API is implemented)
+```powershell
+cd functions
 firebase emulators:start
 ```
 
-- Deploy to Firebase (when ready):
+5) Deploy (when ready)
+```powershell
+firebase deploy --only functions,firestore,hosting
+```
+
+## Functions config (required for auth/CORS)
+
+Set Firebase Functions runtime config for the web API key (used to sign in with password) and allowed frontend origin:
 
 ```powershell
-firebase deploy
+firebase functions:config:set app.apikey="<FIREBASE_WEB_API_KEY>" app.frontend_origin="http://localhost:5173"
 ```
 
-2) Frontend (Vite + React)
+Deploy or restart emulators after changing config.
 
-- Install dependencies and run the Vite dev server:
+## Notes
 
-```powershell
-cd frontend
-npm install
-npm run dev
-```
-
-Open the frontend in your browser (Vite typically serves at `http://localhost:5173`). Configure the Firebase settings in your frontend to point to your Firebase project (see Environment variables below).
-
-## Environment variables (frontend)
-
-When using Vite, environment variables that should be exposed to the browser must start with `VITE_`. Create a `.env` (or `.env.local`) file in `frontend/` and add your Firebase configuration values, for example:
-
-```
-VITE_FIREBASE_API_KEY=your_api_key
-VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
-VITE_FIREBASE_PROJECT_ID=your_project_id
-VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
-VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-VITE_FIREBASE_APP_ID=your_app_id
-```
-
-For Firebase admin credentials (Cloud Functions or server-side use), keep secrets out of the repo and use the recommended secret management for Firebase or CI/CD.
-
-Keep `.env` out of version control and never commit real secrets.
-
-## Screenshots
-
-
-
----
+- Firestore rules currently require authentication; role/ownership checks should be tightened per collection.
+- Functions API is now wired; ensure Functions config is set before using auth endpoints.
+- Keep secrets out of git; .env.local is for local dev only.
 
 

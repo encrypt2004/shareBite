@@ -1,0 +1,28 @@
+# Dependencies
+**/node_modules
+
+# Builds
+**/dist
+**/build
+**/.vercel
+
+# Env files
+*.env
+*.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Editor/OS
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+Thumbs.db
+
+# Firebase emulator data
+.firebase/
