@@ -76,7 +76,7 @@ cd ..\functions && npm install
 ```
 
 2) Env files (frontend)
-Create Frontend/.env.local (already added here for local use) with:
+Create Frontend/.env.local (copy from Frontend/.env.example and fill in your keys) with the required values:
 ```
 VITE_FIREBASE_API_KEY=...
 VITE_FIREBASE_AUTH_DOMAIN=...
