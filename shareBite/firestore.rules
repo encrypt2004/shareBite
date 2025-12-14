@@ -1,9 +1,50 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
-      // Base rule: require authentication. TODO: add role/ownership checks per collection.
-      allow read, write: if request.auth != null;
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function userData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function hasRole(role) {
+      return isSignedIn() && role in userData().data.roles;
+    }
+
+    // Users: only the owner can read/write their profile.
+    match /users/{userId} {
+      allow read, write: if isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Listings: public read; only providers can create/update/delete their own listings.
+    match /listings/{listingId} {
+      allow read: if true;
+
+      allow create: if hasRole("provider")
+        && request.resource.data.provider_id == request.auth.uid;
+
+      allow update, delete: if hasRole("provider")
+        && resource.data.provider_id == request.auth.uid
+        && request.resource.data.provider_id == resource.data.provider_id;
+    }
+
+    // Claims: NGO owner can create/read/update; provider of the related listing can read.
+    match /claims/{claimId} {
+      allow create: if hasRole("ngo")
+        && request.resource.data.ngo_id == request.auth.uid;
+
+      allow read, update: if isSignedIn() && (
+          (resource.data.ngo_id == request.auth.uid) ||
+          (resource.data.provider_id == request.auth.uid)
+        );
+    }
+
+    // Notifications: only the owning user can read/update.
+    match /notifications/{notificationId} {
+      allow read, update: if isSignedIn()
+        && resource.data.user_id == request.auth.uid;
     }
   }
 }
