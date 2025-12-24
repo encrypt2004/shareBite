@@ -115,6 +115,16 @@ firebase functions:config:set app.apikey="<FIREBASE_WEB_API_KEY>" app.frontend_o
 
 Deploy or restart emulators after changing config.
 
+## checklist (manual)
+
+- Register users as provider, NGO, and both; verify auto-login and role-based redirects.
+- Login with existing user; protected routes redirect to login when unauthenticated.
+- Provider: create listing (status = available), view provider dashboard stats, see listing in "my" and public browse.
+- Browse: search/filter by food_type/location/status; open listing details.
+- NGO: claim available listing; provider sees claim in listing details; NGO sees it in their claims list.
+- NGO: submit quality check with media URLs; listing status moves to completed; provider sees updated claim status.
+- Notifications: provider receives claim + completion notifications; NGO sees relevant notifications; mark-as-read buttons update state.
+
 ## Notes
 
 - Firestore rules currently require authentication; role/ownership checks should be tightened per collection.

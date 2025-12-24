@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&family=Merriweather:wght@300;400;700;900&display=swap');
+
+:root {
+  --background: 40 20% 97%;
+  --foreground: 25 10% 20%;
+  --card: 0 0% 100%;
+  --card-h: 0;
+  --card-s: 0%;
+  --card-l: 100%;
+  --primary: 24 80% 55%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 140 30% 40%;
+  --secondary-foreground: 0 0% 100%;
+  --accent: 45 90% 60%;
+  --accent-foreground: 25 10% 20%;
+  --muted: 40 10% 90%;
+  --muted-foreground: 25 10% 35%;
+  --destructive: 0 84% 60%;
+  --border: 40 10% 85%;
+  --border-h: 40;
+  --border-s: 10%;
+  --border-l: 85%;
+  --input: 40 10% 85%;
+  --ring: 24 80% 55%;
+  --radius: 12px;
+  --shadow-soft: 0 4px 20px -2px rgba(25, 10, 0, 0.05);
+  --shadow-hover: 0 10px 25px -5px rgba(25, 10, 0, 0.1);
+  --grain: url('https://grainy-gradients.vercel.app/noise.svg');
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: 'Merriweather', serif;
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}

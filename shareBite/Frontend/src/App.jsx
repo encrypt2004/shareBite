@@ -1,34 +1,57 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { Toaster } from 'sonner'
+import { Header } from './components/Header'
+import { Home } from './pages/Home'
+import { Browse } from './pages/Browse'
+import { ListingDetails } from './pages/ListingDetails'
+import { Login } from './pages/Login'
+import { Register } from './pages/Register'
+import { RestaurantDashboard } from './pages/RestaurantDashboard'
+import { NGODashboard } from './pages/NGODashboard'
+import { useAuth } from './hooks/useAuth'
+
+const PrivateRoute = ({ children, allowed }) => {
+  const { user } = useAuth()
+  const location = useLocation()
+  if (!user) return <Navigate to="/login" state={{ from: location }} replace />
+  if (allowed && !allowed.some((r) => user.roles?.includes(r))) {
+    return <Navigate to="/" replace />
+  }
+  return children
+}
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div className="layout-shell">
+      <Header />
+      <main className="page" style={{ paddingTop: 24, paddingBottom: 48 }}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/browse" element={<Browse />} />
+          <Route path="/listings/:id" element={<ListingDetails />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route
+            path="/provider"
+            element={
+              <PrivateRoute allowed={["provider"]}>
+                <RestaurantDashboard />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/ngo"
+            element={
+              <PrivateRoute allowed={["ngo"]}>
+                <NGODashboard />
+              </PrivateRoute>
+            }
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </main>
+      <Toaster richColors />
+    </div>
   )
 }
 
